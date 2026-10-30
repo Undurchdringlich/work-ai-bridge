@@ -14,19 +14,19 @@ flowchart LR
     subgraph HomePC ["Домашний ПК"]
         Bridge["Bridge Proxy\n(:8080)"]
         Amnezia["AmneziaVPN / Egress\n(Свободный интернет)"]
-        HomeOpenVPN["OpenVPN Client\n(<HOME_VPN_IP>)"]
+        HomeOpenVPN["OpenVPN Client\n(10.x.x.x / VPN IP)"]
         Bridge --> Amnezia
     end
 
     subgraph WorkPC ["Рабочая машина (RDP)"]
         Antigravity["Antigravity IDE / Agent\nHTTP_PROXY=:8080"]
         WorkNet["Корпоративная сеть\n(GitLab, Jira, стенды)"]
-        Antigravity -. "AI трафик" .-> HomeOpenVPN
-        Antigravity -- "NO_PROXY (напрямую)" --> WorkNet
+        Antigravity -.->|"AI трафик"| HomeOpenVPN
+        Antigravity -->|"NO_PROXY (напрямую)"| WorkNet
     end
 
-    HomeOpenVPN <== "Корпоративный VPN-туннель" ==> WorkPC
-    Amnezia ==> "Интернет" ==> GoogleAI["Google Gemini / AI API"]
+    HomeOpenVPN <-->|"Корпоративный VPN-туннель"| WorkPC
+    Amnezia ==>|"Интернет"| GoogleAI["Google Gemini / AI API"]
 ```
 
 ---
